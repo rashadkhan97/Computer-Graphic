@@ -2,19 +2,20 @@ import turtle
 
 # Initialize game variables
 score = 0
-lives = 1
+lives = 2
+colors = ["red", "green", "blue", "orange", "yellow", "white" ] # List of colors for the ball
 
 #window screen setup
 window = turtle.Screen()
-window.title("DX Ball Game")
+window.title("DX Ball Game - Diagon Alley")
 window.bgcolor("Black")
 window.setup(width=800, height=600)
 
 # Create the paddle
 paddle = turtle.Turtle()
 paddle.shape("square")
-paddle.color("orange")
-paddle.shapesize(stretch_wid=1, stretch_len=6)
+paddle.color("white")
+paddle.shapesize(stretch_wid=1, stretch_len=10)
 paddle.penup()
 paddle.goto(0, -250)
 
@@ -24,20 +25,21 @@ ball.shape("circle")
 ball.color("white")
 ball.width(5)
 ball.penup()
-ball.color('blue')
-ball.pensize(2)
+ball.color(colors[0]) # Set initial ball color to the first color in the list
+ball.pensize(5)
 ball.goto(0, 0)
-ball.dx = 2
-ball.dy = 2
-ball.speed(3)
+ball.dx = 3
+ball.dy = 3
+ball.speed(5)
 
-# Create the score and lives displays
+# Create the score 
 score_display = turtle.Turtle()
 score_display.color("white")
 score_display.penup()
 score_display.goto(-380, 260)
 score_display.write(f"Score: {score}", font=("Arial", 16, "bold"))
 
+#Create lives displays
 lives_display = turtle.Turtle()
 lives_display.color("white")
 lives_display.penup()
@@ -50,7 +52,7 @@ gameover_display.hideturtle()
 gameover_display.color("red")
 gameover_display.penup()
 gameover_display.goto(0, 0)
-#gameover_display.write("Game Over", align="center", font=("Arial", 40, "bold"))
+
 
 # Main game loop
 while True:
@@ -62,33 +64,37 @@ while True:
 
     # Check for border collisions
     if ball.xcor() > 380 or ball.xcor() < -380:
-        ball.dx *= -1
+       ball.dx *= -1
+       ball.color(colors[score % len(colors)])  # Change ball color
     elif ball.ycor() > 280:
-        ball.dy *= -1
+       ball.dy *= -1
+    elif ball.xcor() == 380 or ball.xcor() == -380:
+       ball.color(colors[score % len(colors)])  # Change ball color
+
 
     # Check for paddle collision
     if ball.ycor() < -240 and ball.ycor() > -250 and (ball.xcor() > paddle.xcor() - 60 and ball.xcor() < paddle.xcor() + 60):
         ball.dy *= -1
         score += 1
         score_display.clear()
-        score_display.write(f"Score: {score}", font=("Arial", 16, "bold"))
+        score_display.write(f"Score: {score}", font=("Arial", 16, "normal"))
 
     # Check for missed ball
     if ball.ycor() < -280:
         lives -= 1
         lives_display.clear()
-        lives_display.write(f"Lives: {lives}", font=("Arial", 16, "bold"))
+        lives_display.write(f"Lives: {lives}", font=("Arial", 16, "normal"))
         if lives == 0:
             gameover_display.showturtle(gameover_display.write("Game Over", align="center", font=("Arial", 40, "bold")))
             ball.hideturtle()
             window.update()
             turtle.done()
-      #  else:
-      #      ball.goto(0, 0)
-    #        ball.dx *= -1
-      #      ball.dy *= -1
-
-    # Move the paddle
+        else:
+            ball.goto(0, 0)
+            ball.dx *= -1
+            ball.dy *= -1
+            
+       # Move the paddle
     def move_left():
         x = paddle.xcor()
         x -= 20
@@ -106,3 +112,4 @@ while True:
     window.listen()
     window.onkeypress(move_left, "Left")
     window.onkeypress(move_right, "Right")
+
